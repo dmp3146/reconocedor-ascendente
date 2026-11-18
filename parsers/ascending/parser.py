@@ -28,9 +28,16 @@ class TraceStep:
 
 
 class ParseError(ValueError):
-    def __init__(self, message: str, token: Token, expected: set[str]):
+    def __init__(
+        self,
+        message: str,
+        token: Token,
+        expected: set[str],
+        trace: list["TraceStep"] | None = None,
+    ):
         self.token = token
         self.expected = expected
+        self.trace = trace or []
         expected_text = ", ".join(sorted(expected)) or "(ninguno)"
         found = token.lexeme if token.lexeme else "$"
         super().__init__(
@@ -72,7 +79,7 @@ class SLRParser:
                     for (state, symbol) in self.table.action
                     if state == current_state
                 }
-                raise ParseError("Error sintáctico", token, expected)
+                raise ParseError("Error sintáctico", token, expected, trace)
 
             states_before = tuple(states)
             symbols_before = tuple(symbols)

@@ -6,6 +6,10 @@ class EvaluationError(ValueError):
     pass
 
 
+class DivisionByZeroError(EvaluationError):
+    pass
+
+
 def evaluate(root: ASTNode) -> tuple[str | None, float]:
     if root.symbol == "S" and len(root.children) == 3:
         variable = root.children[0].value
@@ -36,7 +40,7 @@ def _evaluate_expression(node: ASTNode) -> float:
         try:
             return operations[operator]()
         except ZeroDivisionError as error:
-            raise EvaluationError("No se puede dividir entre cero") from error
+            raise DivisionByZeroError("No se puede dividir entre cero") from error
     if node.symbol == "F" and len(children) == 3:
         return _evaluate_expression(children[1])
     if len(children) == 1:
